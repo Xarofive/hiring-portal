@@ -47,9 +47,10 @@ git clone https://gitlab.com/your-group/hiring-portal.git
 
 # Проверка билда
 ./gradlew clean build
+./gradlew docker compose build
+./gradlew docker compose up
 
 # Запускаем инфраструктуру(дополнить)
 
 # Запускаем проект(дополнить)
-./gradlew 
 ```
