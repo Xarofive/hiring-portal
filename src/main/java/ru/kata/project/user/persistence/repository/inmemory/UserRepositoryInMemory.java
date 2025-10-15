@@ -56,7 +56,10 @@ public class UserRepositoryInMemory implements UserRepository {
 
     @Override
     public Optional<User> findByUsernameOrEmail(String usernameOrEmail) {
-        return usernameOrEmail.contains("@") ? findByEmail(usernameOrEmail) : findByUsername(usernameOrEmail);
+        if (usernameOrEmail.contains("@")) {
+            return findByEmail(usernameOrEmail);
+        }
+        return findByUsername(usernameOrEmail);
     }
 
     @Override

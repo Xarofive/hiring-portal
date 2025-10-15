@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
+import ru.kata.project.security.service.AuthAuditService;
+import ru.kata.project.security.service.JwtService;
 import ru.kata.project.user.core.entity.Token;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.port.repository.TokenRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.shared.dto.AuthenticationResponseDto;
-import ru.kata.project.user.shared.security.service.AuthAuditService;
-import ru.kata.project.user.shared.security.service.JwtService;
+import ru.kata.project.user.dto.AuthenticationResponseDto;
 
 /**
  * RefreshTokenUseCase
@@ -39,9 +39,9 @@ public class RefreshTokenUseCase {
     private final AuthAuditService auditService;
 
     public ResponseEntity<AuthenticationResponseDto> execute(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = extractToken(request);
-        User user = findUser(refreshToken);
-        Token oldToken = validateToken(refreshToken);
+        final String refreshToken = extractToken(request);
+        final User user = findUser(refreshToken);
+        final Token oldToken = validateToken(refreshToken);
 
         if (!isTokenValid(refreshToken, user)) {
             revokeInvalidTokenFamily(oldToken, response);
@@ -52,7 +52,7 @@ public class RefreshTokenUseCase {
     }
 
     private String extractToken(HttpServletRequest request) {
-        String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
+        final String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
         if (refreshToken == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing refresh token");
         }
@@ -85,8 +85,8 @@ public class RefreshTokenUseCase {
     }
 
     private ResponseEntity<AuthenticationResponseDto> generateNewTokens(User user, Token oldToken, HttpServletResponse response) {
-        String newAccessToken = jwtService.generateAccessToken(user);
-        String newRefreshToken = jwtService.generateRefreshToken(user);
+        final String newAccessToken = jwtService.generateAccessToken(user);
+        final String newRefreshToken = jwtService.generateRefreshToken(user);
 
         jwtService.revokeToken(oldToken);
         jwtService.saveUserToken(newAccessToken, newRefreshToken, user, oldToken.getFamilyId());

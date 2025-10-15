@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.kata.project.user.core.entity.Token;
 import ru.kata.project.user.core.port.repository.TokenRepository;
 import ru.kata.project.user.persistence.repository.jpa.intf.TokenRepositoryJpaInterface;
-import ru.kata.project.user.shared.utility.mapper.TokenMapper;
+import ru.kata.project.user.utility.mapper.TokenMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,5 +54,4 @@ public class TokenRepositoryJpa implements TokenRepository {
     public List<Token> findAllByFamilyId(UUID familyId) {
         return TokenMapper.toDomainList(tokenRepository.findAllByFamilyId(familyId));
     }
-
 }

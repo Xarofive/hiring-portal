@@ -3,13 +3,13 @@ package ru.kata.project.user.core.usecase;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.kata.project.security.service.AuthAuditService;
+import ru.kata.project.security.service.JwtService;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.port.Authenticator;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.shared.dto.AuthenticationResponseDto;
-import ru.kata.project.user.shared.dto.LoginRequestDto;
-import ru.kata.project.user.shared.security.service.AuthAuditService;
-import ru.kata.project.user.shared.security.service.JwtService;
+import ru.kata.project.user.dto.AuthenticationResponseDto;
+import ru.kata.project.user.dto.LoginRequestDto;
 
 import java.util.UUID;
 
@@ -40,17 +40,16 @@ public class AuthenticateUserUseCase {
 
     public AuthenticationResponseDto execute(LoginRequestDto request, HttpServletResponse response) {
         authenticationManager.authenticate(request.getUsername(), request.getPassword());
-        User user = userRepository.findByUsernameOrEmail(request.getUsername())
+        final User user = userRepository.findByUsernameOrEmail(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         return generateTokens(user, response);
     }
 
     private AuthenticationResponseDto generateTokens(User user, HttpServletResponse response) {
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        final String accessToken = jwtService.generateAccessToken(user);
+        final String refreshToken = jwtService.generateRefreshToken(user);
 
-        UUID familyId = UUID.randomUUID();
+        final UUID familyId = UUID.randomUUID();
 
         jwtService.saveUserToken(accessToken, refreshToken, user, familyId);
         jwtService.setRefreshCookie(refreshToken, response);

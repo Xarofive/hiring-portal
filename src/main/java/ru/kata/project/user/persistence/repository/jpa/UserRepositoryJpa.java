@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.port.repository.UserRepository;
 import ru.kata.project.user.persistence.repository.jpa.intf.UserRepositoryJpaInterface;
-import ru.kata.project.user.shared.utility.mapper.UserMapper;
+import ru.kata.project.user.utility.mapper.UserMapper;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -46,9 +46,10 @@ public class UserRepositoryJpa implements UserRepository {
 
     @Override
     public Optional<User> findByUsernameOrEmail(String usernameOrEmail) {
-        return usernameOrEmail.contains("@")
-                ? userRepository.findByEmail(usernameOrEmail).map(UserMapper::toDomain)
-                : userRepository.findByUsername(usernameOrEmail).map(UserMapper::toDomain);
+        if (usernameOrEmail.contains("@")) {
+            return userRepository.findByEmail(usernameOrEmail).map(UserMapper::toDomain);
+        }
+        return userRepository.findByUsername(usernameOrEmail).map(UserMapper::toDomain);
     }
 
     @Override

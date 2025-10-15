@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kata.project.user.core.entity.Role;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.shared.utility.enumeration.UserStatus;
+import ru.kata.project.user.utility.enumeration.UserStatus;
 
 import java.util.Set;
 
@@ -20,20 +20,20 @@ public class InMemoryInitializer {
 
     @PostConstruct
     private void initAdminUser() {
-        Role adminRole = new Role();
+        final Role adminRole = new Role();
         adminRole.setCode("ROLE_ADMIN");
         adminRole.setName("Administrator");
         roleRepository.save(adminRole);
-        Role candidateRole = new Role();
+        final Role candidateRole = new Role();
         candidateRole.setCode("ROLE_CANDIDATE");
         candidateRole.setName("Candidate");
         roleRepository.save(candidateRole);
-        Role recruiterRole = new Role();
+        final Role recruiterRole = new Role();
         recruiterRole.setCode("ROLE_RECRUITER");
         recruiterRole.setName("Recruiter");
         roleRepository.save(recruiterRole);
 
-        User admin = new User();
+        final User admin = new User();
         admin.setUsername("admin");
         admin.setEmail("admin@example.com");
         admin.setPasswordHash(passwordEncoder.encode("12345"));

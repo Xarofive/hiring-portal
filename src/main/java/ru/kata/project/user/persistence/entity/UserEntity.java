@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.shared.utility.enumeration.UserStatus;
+import ru.kata.project.user.utility.enumeration.UserStatus;
 
 import java.sql.Timestamp;
 import java.util.Set;
@@ -86,5 +86,4 @@ public class UserEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_profile_id")
     private UserProfileEntity userProfile;
-
 }
