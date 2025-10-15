@@ -2,15 +2,15 @@ package ru.kata.project.user.core.usecase;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.kata.project.security.service.AuthAuditService;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.port.EmailCodeEncoder;
 import ru.kata.project.user.core.port.UserPasswordEncoder;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.shared.dto.NewPasswordDto;
-import ru.kata.project.user.shared.security.service.AuthAuditService;
-import ru.kata.project.user.shared.utility.enumeration.UserStatus;
+import ru.kata.project.user.dto.NewPasswordDto;
+import ru.kata.project.user.utility.enumeration.UserStatus;
 
 import java.sql.Timestamp;
 
@@ -42,8 +42,8 @@ public class ResetPasswordUseCase {
     private final AuthAuditService auditService;
 
     public String execute(NewPasswordDto newPasswordDto) {
-        EmailVerification verification = findEmailVerification(newPasswordDto.getCode());
-        User user = findUser(verification);
+        final EmailVerification verification = findEmailVerification(newPasswordDto.getCode());
+        final User user = findUser(verification);
         resetPassword(user, verification, newPasswordDto.getPassword());
         return "Пароль успешно изменён, пользователь разблокирован";
     }

@@ -71,7 +71,7 @@ public class TokenRepositoryInMemory implements TokenRepository {
     }
 
     public void revokeToken(UUID tokenId) {
-        Token token = tokens.get(tokenId);
+        final Token token = tokens.get(tokenId);
         if (token != null) {
             token.setRevokedAt(new Timestamp(System.currentTimeMillis()));
         }

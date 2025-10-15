@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.kata.project.user.core.entity.Role;
 import ru.kata.project.user.core.port.repository.RoleRepository;
 import ru.kata.project.user.persistence.repository.jpa.intf.RoleRepositoryJpaInterface;
-import ru.kata.project.user.shared.utility.mapper.RoleMapper;
+import ru.kata.project.user.utility.mapper.RoleMapper;
 
 import java.util.Optional;
 

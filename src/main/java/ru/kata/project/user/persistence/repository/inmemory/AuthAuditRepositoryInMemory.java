@@ -42,5 +42,4 @@ public class AuthAuditRepositoryInMemory implements AuthAuditRepository {
     public List<AuthAudit> findAll() {
         return List.copyOf(storage);
     }
-
 }

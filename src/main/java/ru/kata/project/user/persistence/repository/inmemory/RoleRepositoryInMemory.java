@@ -43,5 +43,4 @@ public class RoleRepositoryInMemory implements RoleRepository {
         return storage.values().stream()
                 .anyMatch(r -> r.getCode().equalsIgnoreCase(code));
     }
-
 }
