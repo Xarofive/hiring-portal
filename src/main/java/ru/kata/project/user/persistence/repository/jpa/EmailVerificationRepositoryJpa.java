@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.persistence.repository.jpa.intf.EmailVerificationRepositoryJpaInterface;
-import ru.kata.project.user.shared.utility.mapper.EmailVerificationMapper;
+import ru.kata.project.user.utility.mapper.EmailVerificationMapper;
 
 import java.util.Optional;
 

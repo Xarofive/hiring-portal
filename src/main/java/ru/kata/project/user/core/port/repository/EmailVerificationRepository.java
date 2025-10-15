@@ -17,5 +17,4 @@ public interface EmailVerificationRepository {
     EmailVerification save(EmailVerification emailVerification);
 
     Optional<EmailVerification> findByCodeHash(String codeHash);
-
 }

@@ -15,12 +15,12 @@ import ru.kata.project.user.core.usecase.RefreshTokenUseCase;
 import ru.kata.project.user.core.usecase.ResetPasswordUseCase;
 import ru.kata.project.user.core.usecase.UserRegistrationUseCase;
 import ru.kata.project.user.core.usecase.VerifyEmailUseCase;
-import ru.kata.project.user.shared.dto.AuthenticationResponseDto;
-import ru.kata.project.user.shared.dto.EmailResetDto;
-import ru.kata.project.user.shared.dto.EmailVerificationCodeDto;
-import ru.kata.project.user.shared.dto.LoginRequestDto;
-import ru.kata.project.user.shared.dto.NewPasswordDto;
-import ru.kata.project.user.shared.dto.RegistrationRequestDto;
+import ru.kata.project.user.dto.AuthenticationResponseDto;
+import ru.kata.project.user.dto.EmailResetDto;
+import ru.kata.project.user.dto.EmailVerificationCodeDto;
+import ru.kata.project.user.dto.LoginRequestDto;
+import ru.kata.project.user.dto.NewPasswordDto;
+import ru.kata.project.user.dto.RegistrationRequestDto;
 
 @RestController
 @RequiredArgsConstructor

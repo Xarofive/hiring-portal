@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.kata.project.security.service.AuthAuditService;
+import ru.kata.project.security.service.JwtService;
 import ru.kata.project.user.core.port.repository.TokenRepository;
-import ru.kata.project.user.shared.security.service.AuthAuditService;
-import ru.kata.project.user.shared.security.service.JwtService;
 
 /**
  * LogoutUserUseCase
@@ -30,7 +30,7 @@ public class LogoutUserUseCase {
     private final AuthAuditService auditService;
 
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
+        final String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
         if (refreshToken == null) {
             log.debug("No refresh token in cookies");
             return "Недействительный токен";

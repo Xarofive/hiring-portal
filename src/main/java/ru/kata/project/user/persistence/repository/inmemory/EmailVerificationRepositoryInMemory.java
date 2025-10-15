@@ -47,5 +47,4 @@ public class EmailVerificationRepositoryInMemory implements EmailVerificationRep
                 .filter(v -> Objects.equals(v.getCodeHash(), codeHash))
                 .findFirst();
     }
-
 }

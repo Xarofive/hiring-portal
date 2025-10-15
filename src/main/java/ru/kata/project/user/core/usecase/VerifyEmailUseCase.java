@@ -2,14 +2,14 @@ package ru.kata.project.user.core.usecase;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.kata.project.security.service.AuthAuditService;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.port.EmailCodeEncoder;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.shared.dto.EmailVerificationCodeDto;
-import ru.kata.project.user.shared.security.service.AuthAuditService;
-import ru.kata.project.user.shared.utility.enumeration.UserStatus;
+import ru.kata.project.user.dto.EmailVerificationCodeDto;
+import ru.kata.project.user.utility.enumeration.UserStatus;
 
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
@@ -41,11 +41,11 @@ public class VerifyEmailUseCase {
 
     public String execute(EmailVerificationCodeDto codeDto) {
         try {
-            EmailVerification emailVerification = emailVerificationRepository
+            final EmailVerification emailVerification = emailVerificationRepository
                     .findByCodeHash(emailCodeEncoder.encode(codeDto.getCode()))
                     .orElseThrow(() -> new UsernameNotFoundException("Код недействителен"));
             if (emailVerification.getConsumedAt() == null) {
-                User user = userRepository.findById(emailVerification.getUserId())
+                final User user = userRepository.findById(emailVerification.getUserId())
                         .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
                 user.setStatus(UserStatus.ACTIVE);
                 emailVerification.setConsumedAt(new Timestamp(System.currentTimeMillis()));

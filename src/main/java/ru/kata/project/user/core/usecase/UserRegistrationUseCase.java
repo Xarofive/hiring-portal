@@ -1,6 +1,7 @@
 package ru.kata.project.user.core.usecase;
 
 import lombok.RequiredArgsConstructor;
+import ru.kata.project.security.service.AuthAuditService;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.entity.UserProfile;
@@ -9,9 +10,8 @@ import ru.kata.project.user.core.port.EmailCodeGenerator;
 import ru.kata.project.user.core.port.UserPasswordEncoder;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.shared.dto.RegistrationRequestDto;
-import ru.kata.project.user.shared.security.service.AuthAuditService;
-import ru.kata.project.user.shared.utility.enumeration.UserStatus;
+import ru.kata.project.user.dto.RegistrationRequestDto;
+import ru.kata.project.user.utility.enumeration.UserStatus;
 
 import java.util.Set;
 
@@ -46,8 +46,8 @@ public class UserRegistrationUseCase {
     private final AuthAuditService auditService;
 
     public String execute(RegistrationRequestDto request) {
-        User user = createUser(request);
-        String emailVerificationToken = createEmailVerification(user);
+        final User user = createUser(request);
+        final String emailVerificationToken = createEmailVerification(user);
 
         auditService.logAudit(user.getId(), "REGISTRATION", "0.0.0.0:0000", "{json:json}");
 
@@ -65,7 +65,7 @@ public class UserRegistrationUseCase {
 
     private User createUser(RegistrationRequestDto request) {
         validateUniqueUser(request);
-        User user = User.builder()
+        final User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
@@ -81,7 +81,7 @@ public class UserRegistrationUseCase {
     }
 
     private String createEmailVerification(User user) {
-        String code = emailCodeGenerator.generate();
+        final String code = emailCodeGenerator.generate();
         emailVerificationRepository.save(EmailVerification.builder()
                 .userId(user.getId())
                 .codeHash(emailCodeEncoder.encode(code))
