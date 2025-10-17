@@ -1,5 +1,9 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.freefair.lombok' version "9.0.0"
+    id 'checkstyle'
 }
 
 group = 'ru.kata.project'
@@ -9,12 +13,36 @@ repositories {
     mavenCentral()
 }
 
+checkstyle {
+    toolVersion = '10.12.3'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+}
+
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.5.6'
+    implementation 'org.flywaydb:flyway-core:11.13.1'
+    implementation 'org.flywaydb:flyway-database-postgresql'
 }
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    enabled = false
+}
+
+bootJar {
+    enabled = true
+    archiveFileName = 'hiring-portal-app.jar'
 }
