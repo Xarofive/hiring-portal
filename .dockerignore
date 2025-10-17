@@ -1,0 +1,6 @@
+!build/libs/hiring-portal-app.jar
+.gradle
+.git
+.idea
+*.iml
+out
