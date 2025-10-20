@@ -133,7 +133,7 @@ class ResetPasswordUseCaseTest {
 
     @Test
     void givenConsumedVerification_whenResetPassword_thenThrowsInvalidCodeException() {
-        EmailVerification consumedVerification = EmailVerification.builder()
+        final EmailVerification consumedVerification = EmailVerification.builder()
                 .userId(UUID.randomUUID())
                 .codeHash("encoded_code")
                 .consumedAt(new Timestamp(System.currentTimeMillis()))
