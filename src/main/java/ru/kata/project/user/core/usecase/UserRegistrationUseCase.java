@@ -1,19 +1,22 @@
 package ru.kata.project.user.core.usecase;
 
 import lombok.RequiredArgsConstructor;
-import ru.kata.project.security.service.AuthAuditService;
+import ru.kata.project.user.core.dto.RegistrationRequestDto;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.entity.UserProfile;
-import ru.kata.project.user.core.port.EmailCodeEncoder;
-import ru.kata.project.user.core.port.EmailCodeGenerator;
-import ru.kata.project.user.core.port.UserPasswordEncoder;
+import ru.kata.project.user.core.entity.UserStatus;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.dto.RegistrationRequestDto;
-import ru.kata.project.user.utility.enumeration.UserStatus;
+import ru.kata.project.user.core.port.service.AuthAuditService;
+import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
+import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
+import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * UserRegistrationUseCase
@@ -38,6 +41,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserRegistrationUseCase {
 
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     private final UserRepository userRepository;
     private final UserPasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
@@ -55,26 +61,34 @@ public class UserRegistrationUseCase {
     }
 
     private void validateUniqueUser(RegistrationRequestDto request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("Username already exists");
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
+    private void validateCorrectEmail(String email) {
+        final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Bad email address");
         }
     }
 
     private User createUser(RegistrationRequestDto request) {
         validateUniqueUser(request);
+        validateCorrectEmail(request.email());
         final User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .username(request.username())
+                .email(request.email().toLowerCase())
+                .passwordHash(passwordEncoder.encode(request.password()))
                 .status(UserStatus.PENDING_EMAIL)
                 .roles(Set.of()).build();
-        if (request.getFirstName() != null && request.getLastName() != null) {
+        if (request.firstName() != null && request.lastName() != null) {
             user.setUserProfile(UserProfile.builder()
-                    .firstName(request.getFirstName())
-                    .lastName(request.getLastName())
+                    .firstName(Optional.of(request.firstName()).orElse(""))
+                    .lastName(Optional.of(request.lastName()).orElse(""))
                     .build());
         }
         return userRepository.save(user);

@@ -1,12 +1,10 @@
 package ru.kata.project.user.core.usecase;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.kata.project.security.service.AuthAuditService;
-import ru.kata.project.security.service.JwtService;
 import ru.kata.project.user.core.port.repository.TokenRepository;
+import ru.kata.project.user.core.port.service.AuthAuditService;
+import ru.kata.project.user.core.port.service.JwtService;
 
 /**
  * LogoutUserUseCase
@@ -29,20 +27,14 @@ public class LogoutUserUseCase {
     private final JwtService jwtService;
     private final AuthAuditService auditService;
 
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        final String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
+    public void execute(String refreshToken) {
         if (refreshToken == null) {
-            log.debug("No refresh token in cookies");
-            return "Недействительный токен";
+            return;
         }
 
         tokenRepository.findByRefreshToken(refreshToken).ifPresent(token -> {
             jwtService.revokeFamily(token.getFamilyId());
             auditService.logAudit(token.getUserId(), "LOGOUT", "0.0.0.0:0000", "{json:json}");
         });
-
-        jwtService.deleteRefreshCookie(response);
-
-        return "Успешный выход из аккаунта";
     }
 }

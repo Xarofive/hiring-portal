@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
-import ru.kata.project.user.core.entity.Token;
+import ru.kata.project.user.core.port.service.JwtService;
+import ru.kata.project.user.core.usecase.LogoutUserUseCase;
 import ru.kata.project.user.persistence.repository.jpa.TokenRepositoryJpa;
 
 /**
@@ -25,6 +26,8 @@ import ru.kata.project.user.persistence.repository.jpa.TokenRepositoryJpa;
 public class CustomLogoutHandler implements LogoutHandler {
 
     private final TokenRepositoryJpa tokenRepository;
+    private final JwtService jwtService;
+    private final LogoutUserUseCase logoutUserUseCase;
 
     @Override
     public void logout(HttpServletRequest request,
@@ -32,18 +35,17 @@ public class CustomLogoutHandler implements LogoutHandler {
                        Authentication authentication) {
 
         final String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            final String accessToken = authHeader.substring(7);
+            tokenRepository.findByAccessToken(accessToken).ifPresent(token -> {
+                token.setLoggedOut(true);
+                tokenRepository.save(token);
+            });
         }
 
-        final String token = authHeader.substring(7);
+        final String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
+        logoutUserUseCase.execute(refreshToken);
 
-        final Token tokenEntity = tokenRepository.findByAccessToken(token).orElse(null);
-
-        if (tokenEntity != null) {
-            tokenEntity.setLoggedOut(true);
-            tokenRepository.save(tokenEntity);
-        }
+        jwtService.deleteRefreshCookie(response);
     }
 }
