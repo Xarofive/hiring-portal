@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.kata.project.security.service.JwtService;
+import ru.kata.project.security.service.JwtServiceAdapter;
 import ru.kata.project.security.service.UserService;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final JwtServiceAdapter jwtServiceAdapter;
 
     private final UserService userService;
 
@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
         final String token = authHeader.substring(7);
         String username;
         try {
-            username = jwtService.extractUsername(token);
+            username = jwtServiceAdapter.extractUsername(token);
         } catch (Exception e) {
             log.warn("JWT parsing failed: {}", e.getMessage());
             username = null;
@@ -52,7 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             final UserDetails userDetails = userService.loadUserByUsername(username);
 
-            if (jwtService.isValid(token, userDetails)) {
+            if (jwtServiceAdapter.isValid(token, userDetails)) {
                 final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

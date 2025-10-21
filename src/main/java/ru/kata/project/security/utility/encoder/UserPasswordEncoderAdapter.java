@@ -3,7 +3,7 @@ package ru.kata.project.security.utility.encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.kata.project.user.core.port.UserPasswordEncoder;
+import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
 
 /**
  * UserPasswordEncoderAdapter
