@@ -2,15 +2,14 @@ package ru.kata.project.user.utility.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.kata.project.security.service.AuthAuditService;
-import ru.kata.project.security.service.JwtService;
-import ru.kata.project.user.core.port.Authenticator;
-import ru.kata.project.user.core.port.EmailCodeEncoder;
-import ru.kata.project.user.core.port.EmailCodeGenerator;
-import ru.kata.project.user.core.port.UserPasswordEncoder;
+import ru.kata.project.security.service.JwtServiceAdapter;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.TokenRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
+import ru.kata.project.user.core.port.service.AuthenticationService;
+import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
+import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
+import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
 import ru.kata.project.user.core.usecase.AuthenticateUserUseCase;
 import ru.kata.project.user.core.usecase.ForgotPasswordUseCase;
 import ru.kata.project.user.core.usecase.LogoutUserUseCase;
@@ -18,6 +17,7 @@ import ru.kata.project.user.core.usecase.RefreshTokenUseCase;
 import ru.kata.project.user.core.usecase.ResetPasswordUseCase;
 import ru.kata.project.user.core.usecase.UserRegistrationUseCase;
 import ru.kata.project.user.core.usecase.VerifyEmailUseCase;
+import ru.kata.project.user.persistence.service.AuthAuditServiceAdapter;
 
 /**
  * UseCaseBeanConfig
@@ -37,7 +37,7 @@ public class UseCaseBeanConfig {
             EmailVerificationRepository emailVerificationRepository,
             EmailCodeEncoder emailCodeEncoder,
             EmailCodeGenerator emailCodeGenerator,
-            AuthAuditService auditService) {
+            AuthAuditServiceAdapter auditService) {
 
         return new UserRegistrationUseCase(
                 userRepository,
@@ -53,7 +53,7 @@ public class UseCaseBeanConfig {
     public VerifyEmailUseCase verifyEmailUseCase(UserRepository userRepository,
                                                  EmailVerificationRepository emailVerificationRepository,
                                                  EmailCodeEncoder emailCodeEncoder,
-                                                 AuthAuditService auditService) {
+                                                 AuthAuditServiceAdapter auditService) {
 
         return new VerifyEmailUseCase(userRepository,
                 emailVerificationRepository,
@@ -62,24 +62,24 @@ public class UseCaseBeanConfig {
     }
 
     @Bean
-    public AuthenticateUserUseCase authenticateUserUseCase(Authenticator authenticationManager,
+    public AuthenticateUserUseCase authenticateUserUseCase(AuthenticationService authenticationManager,
                                                            UserRepository userRepository,
-                                                           JwtService jwtService,
-                                                           AuthAuditService auditService) {
+                                                           JwtServiceAdapter jwtServiceAdapter,
+                                                           AuthAuditServiceAdapter auditService) {
 
         return new AuthenticateUserUseCase(authenticationManager,
                 userRepository,
-                jwtService,
+                jwtServiceAdapter,
                 auditService);
     }
 
     @Bean
-    public RefreshTokenUseCase refreshTokenUseCase(JwtService jwtService,
+    public RefreshTokenUseCase refreshTokenUseCase(JwtServiceAdapter jwtServiceAdapter,
                                                    UserRepository userRepository,
                                                    TokenRepository tokenRepository,
-                                                   AuthAuditService auditService) {
+                                                   AuthAuditServiceAdapter auditService) {
 
-        return new RefreshTokenUseCase(jwtService,
+        return new RefreshTokenUseCase(jwtServiceAdapter,
                 userRepository,
                 tokenRepository,
                 auditService);
@@ -87,11 +87,11 @@ public class UseCaseBeanConfig {
 
     @Bean
     public LogoutUserUseCase logoutUserUseCase(TokenRepository tokenRepository,
-                                               JwtService jwtService,
-                                               AuthAuditService auditService) {
+                                               JwtServiceAdapter jwtServiceAdapter,
+                                               AuthAuditServiceAdapter auditService) {
 
         return new LogoutUserUseCase(tokenRepository,
-                jwtService,
+                jwtServiceAdapter,
                 auditService);
     }
 
@@ -101,15 +101,15 @@ public class UseCaseBeanConfig {
                                                        TokenRepository tokenRepository,
                                                        EmailCodeGenerator emailCodeGenerator,
                                                        EmailCodeEncoder emailCodeEncoder,
-                                                       JwtService jwtService,
-                                                       AuthAuditService auditService) {
+                                                       JwtServiceAdapter jwtServiceAdapter,
+                                                       AuthAuditServiceAdapter auditService) {
 
         return new ForgotPasswordUseCase(userRepository,
                 emailVerificationRepository,
                 tokenRepository,
                 emailCodeGenerator,
                 emailCodeEncoder,
-                jwtService,
+                jwtServiceAdapter,
                 auditService);
     }
 
@@ -118,7 +118,7 @@ public class UseCaseBeanConfig {
                                                      EmailVerificationRepository emailVerificationRepository,
                                                      UserPasswordEncoder passwordEncoder,
                                                      EmailCodeEncoder emailCodeEncoder,
-                                                     AuthAuditService auditService) {
+                                                     AuthAuditServiceAdapter auditService) {
 
         return new ResetPasswordUseCase(userRepository,
                 emailVerificationRepository,

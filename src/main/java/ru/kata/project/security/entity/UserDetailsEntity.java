@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.utility.enumeration.UserStatus;
+import ru.kata.project.user.core.entity.UserStatus;
 
 import java.io.Serial;
 import java.util.Collection;
@@ -61,5 +61,9 @@ public class UserDetailsEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.getStatus() == UserStatus.ACTIVE;
+    }
+
+    public boolean isAccountNonDeleted() {
+        return user.getStatus() != UserStatus.DELETED;
     }
 }

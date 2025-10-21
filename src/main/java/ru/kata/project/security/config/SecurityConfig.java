@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.kata.project.security.filter.JwtFilter;
+import ru.kata.project.security.provider.CustomAuthenticationProvider;
 import ru.kata.project.security.service.UserService;
 import ru.kata.project.security.utility.handler.CustomAccessDeniedHandler;
 import ru.kata.project.security.utility.handler.CustomLogoutHandler;
@@ -49,7 +50,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(jwtFIlter, UsernamePasswordAuthenticationFilter.class)
                 .logout(log -> {
-                    log.logoutUrl("/logout");
+                    log.logoutUrl("/auth/logout");
                     log.addLogoutHandler(customLogoutHandler);
                     log.logoutSuccessHandler((request, response, authentication) ->
                             SecurityContextHolder.clearContext());
@@ -66,5 +67,12 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        final CustomAuthenticationProvider provider = new CustomAuthenticationProvider(userService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 }
