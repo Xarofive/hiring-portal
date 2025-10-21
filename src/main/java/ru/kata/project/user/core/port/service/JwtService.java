@@ -9,6 +9,25 @@ import ru.kata.project.user.core.entity.User;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * JwtService
+ * <p>
+ * Порт для работы с JWT-токенами.
+ * Определяет контракты для генерации, валидации, хранения и аннулирования токенов.
+ * </p>
+ * <ul>
+ *  <li>Создание access и refresh токенов для пользователя;</li>
+ *  <li>Проверка токенов на валидность и срок действия;</li>
+ *  <li>Извлечение информации из токена (username, jti, kid, expiration);</li>
+ *  <li>Сохранение и отзыв токенов в хранилище;</li>
+ *  <li>Работа с refresh-токенами через HTTP cookies.</li>
+ * </ul>
+ * <p>
+ * Реализация интерфейса должна соответствовать требованиям безопасности, установленным для JWT-токенов.
+ * </p>
+ *
+ * @author Vladislav_Bogomolov
+ */
 public interface JwtService {
 
     String generateAccessToken(User user);

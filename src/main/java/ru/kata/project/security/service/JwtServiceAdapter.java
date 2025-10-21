@@ -29,6 +29,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * JwtServiceAdapter
+ * <p>
+ * Реализация порта {@link JwtService}.
+ * </p>
+ * <ul>
+ *  <li>Генерация токена по типу (access, refresh);</li>
+ *  <li>Валидация токенов с помощью шифрованных ключей через {@link KeyService};</li>
+ *  <li>Сохранение и отзыв токенов через {@link TokenRepository}.</li>
+ * </ul>
+ * <p>
+ * Все токены подписываются приватным RSA-ключом, а в заголовок JWT добавляется идентификатор ключа (KID),
+ * что позволяет динамически верифицировать подпись через публичный ключ из {@link KeyService}.
+ * </p>
+ * <p>
+ * Конфигурационные параметры:
+ * <ul>
+ *     <li><b>security.jwt.access_token_expiration</b> — время жизни access-токена (в миллисекундах);</li>
+ *     <li><b>security.jwt.refresh_token_expiration</b> — время жизни refresh-токена (в миллисекундах).</li>
+ * </ul>
+ * </p>
+ *
+ * @author Vladislav_Bogomolov
+ */
 @Service
 @RequiredArgsConstructor
 public class JwtServiceAdapter implements JwtService {
