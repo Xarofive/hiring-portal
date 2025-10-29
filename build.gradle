@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'io.freefair.lombok' version "9.0.0"
     id 'checkstyle'
+    id 'jacoco'
 }
 
 group = 'ru.kata.project'
@@ -21,6 +22,9 @@ checkstyle {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.20.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.20.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
@@ -32,10 +36,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security:3.5.6'
     implementation 'org.flywaydb:flyway-core:11.13.1'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 jar {
@@ -45,4 +51,17 @@ jar {
 bootJar {
     enabled = true
     archiveFileName = 'hiring-portal-app.jar'
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
 }

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.kata.project.user.core.entity.AuthAudit;
 import ru.kata.project.user.core.port.repository.AuthAuditRepository;
+import ru.kata.project.user.persistence.mapper.AuthAuditMapper;
 import ru.kata.project.user.persistence.repository.jpa.intf.AuthAuditRepositoryJpaInterface;
-import ru.kata.project.user.utility.mapper.AuthAuditMapper;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package ru.kata.project.security.utility.generator;
 
 import org.springframework.stereotype.Component;
-import ru.kata.project.user.core.port.EmailCodeGenerator;
+import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
 
 import java.util.Random;
 

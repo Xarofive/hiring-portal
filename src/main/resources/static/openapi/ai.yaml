@@ -1,0 +1,206 @@
+openapi: 3.0.3
+info:
+  title: Ai Resume API
+  version: 1.0.0
+  description: |
+    REST API для анализа и генерации резюме с помощью ИИ.
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: Ai Resume
+    description: "Эндпоинты для анализа и генерации резюме с помощью ИИ"
+
+paths:
+  /ai/resumes/{id}/analyze:
+    post:
+      tags:
+        - Ai Resume
+      summary: Анализ резюме
+      description: Выполняет анализ резюме по указанному идентификатору и возвращает рекомендации.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор резюме
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeRequestDto'
+      responses:
+        "200":
+          description: Успешный анализ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResultDto'
+        "400":
+          description: Некорректные входные данные
+        "401":
+          description: Неавторизован (JWT отсутствует или недействителен)
+        "403":
+          description: Доступ запрещён
+        "404":
+          description: Резюме не найдено
+
+  /ai/resumes/generate:
+    post:
+      tags:
+        - Ai Resume
+      summary: Генерация черновика резюме
+      description: Создает шаблон резюме по входным данным (имя, целевая должность, навыки и т.д.).
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequestDto'
+      responses:
+        "200":
+          description: Успешная генерация резюме
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedResumeDto'
+        "400":
+          description: Ошибка в теле запроса
+        "401":
+          description: Неавторизован (JWT отсутствует или недействителен)
+        "403":
+          description: Доступ запрещён
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AnalyzeRequestDto:
+      description: DTO-запрос с данными для анализа резюме
+      type: object
+      properties:
+        locale:
+          type: string
+          example: "ru"
+        targetRole:
+          type: string
+          example: "Java Developer"
+        targetSeniority:
+          type: string
+          enum: [ "JUNIOR", "MIDDLE", "SENIOR", "LEAD" ]
+      required: [ locale, targetRole, targetSeniority ]
+
+    GenerateRequestDto:
+      description: DTO-запрос с данными для генерации резюме
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: "Ivan Ivanov"
+        targetRole:
+          type: string
+          example: "Backend Developer"
+        skills:
+          type: array
+          items:
+            type: string
+            example: "Spring Boot"
+        experience:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExperienceDto'
+        education:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationDto'
+        locale:
+          type: string
+          example: "en"
+      required: [ fullName, targetRole, locale ]
+
+    ExperienceDto:
+      description: DTO-значение с данными об опыте работы пользователя
+      type: object
+      properties:
+        company:
+          type: string
+          example: "Tech Corp"
+        position:
+          type: string
+          example: "Software Engineer"
+        years:
+          type: string
+          example: "2020–2024"
+
+    EducationDto:
+      description: DTO-значение с данными об обучении пользователя
+      type: object
+      properties:
+        institution:
+          type: string
+          example: "ITMO University"
+        degree:
+          type: string
+          example: "B.Sc. in Computer Science"
+        years:
+          type: string
+          example: "2016–2020"
+
+    AnalysisResultDto:
+      description: DTO-результат с данными анализа резюме
+      type: object
+      properties:
+        resumeId:
+          type: string
+          format: uuid
+        recommendations:
+          type: array
+          items:
+            type: string
+            example: "Укажите стек технологий"
+        analyzedAt:
+          type: string
+          format: date-time
+          example: "2025-10-27T15:35:00Z"
+        analyzerVersion:
+          type: string
+          example: "stub-1.0.0"
+
+    GeneratedResumeDto:
+      description: DTO-результат с сгенерированными данными резюме
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+          example: "Ivan Ivanov"
+        summary:
+          type: string
+          example: "Backend Java Developer с опытом в Spring Boot и Docker"
+        skills:
+          type: array
+          items:
+            type: string
+          example: [ "Java", "Spring Boot", "Docker" ]
+        templateVersion:
+          type: string
+          example: "stub-1.0.0"
+        locale:
+          type: string
+          example: "en"
+
+security:
+  - bearerAuth: [ ]

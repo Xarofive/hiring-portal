@@ -1,16 +1,17 @@
 package ru.kata.project.user.core.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.kata.project.security.service.AuthAuditService;
+import ru.kata.project.user.core.dto.NewPasswordDto;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.core.port.EmailCodeEncoder;
-import ru.kata.project.user.core.port.UserPasswordEncoder;
+import ru.kata.project.user.core.entity.UserStatus;
+import ru.kata.project.user.core.exception.InvalidCodeException;
+import ru.kata.project.user.core.exception.UserNotFoundException;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.dto.NewPasswordDto;
-import ru.kata.project.user.utility.enumeration.UserStatus;
+import ru.kata.project.user.core.port.service.AuthAuditService;
+import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
+import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
 
 import java.sql.Timestamp;
 
@@ -42,9 +43,9 @@ public class ResetPasswordUseCase {
     private final AuthAuditService auditService;
 
     public String execute(NewPasswordDto newPasswordDto) {
-        final EmailVerification verification = findEmailVerification(newPasswordDto.getCode());
+        final EmailVerification verification = findEmailVerification(newPasswordDto.code());
         final User user = findUser(verification);
-        resetPassword(user, verification, newPasswordDto.getPassword());
+        resetPassword(user, verification, newPasswordDto.password());
         return "Пароль успешно изменён, пользователь разблокирован";
     }
 
@@ -52,12 +53,12 @@ public class ResetPasswordUseCase {
         return emailVerificationRepository
                 .findByCodeHash(emailCodeEncoder.encode(code))
                 .filter(v -> v.getConsumedAt() == null)
-                .orElseThrow(() -> new RuntimeException("Код недействителен или уже использован"));
+                .orElseThrow(() -> new InvalidCodeException("Код недействителен или уже использован"));
     }
 
     private User findUser(EmailVerification verification) {
         return userRepository.findById(verification.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
     }
 
     private void resetPassword(User user, EmailVerification verification, String newPassword) {

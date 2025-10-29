@@ -1,7 +1,7 @@
 package ru.kata.project.security.utility.encoder;
 
 import org.springframework.stereotype.Component;
-import ru.kata.project.user.core.port.EmailCodeEncoder;
+import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

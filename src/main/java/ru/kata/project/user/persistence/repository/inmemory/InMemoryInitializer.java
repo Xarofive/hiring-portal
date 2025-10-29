@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kata.project.user.core.entity.Role;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.utility.enumeration.UserStatus;
+import ru.kata.project.user.core.entity.UserStatus;
 
 import java.util.Set;
 

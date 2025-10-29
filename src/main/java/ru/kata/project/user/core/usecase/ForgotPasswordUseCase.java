@@ -1,19 +1,19 @@
 package ru.kata.project.user.core.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.kata.project.security.service.AuthAuditService;
-import ru.kata.project.security.service.JwtService;
+import ru.kata.project.user.core.dto.EmailResetDto;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.Token;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.core.port.EmailCodeEncoder;
-import ru.kata.project.user.core.port.EmailCodeGenerator;
+import ru.kata.project.user.core.entity.UserStatus;
+import ru.kata.project.user.core.exception.UserNotFoundException;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.TokenRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.dto.EmailResetDto;
-import ru.kata.project.user.utility.enumeration.UserStatus;
+import ru.kata.project.user.core.port.service.AuthAuditService;
+import ru.kata.project.user.core.port.service.JwtService;
+import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
+import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
 
 import java.util.Objects;
 
@@ -51,7 +51,7 @@ public class ForgotPasswordUseCase {
 
     public String execute(EmailResetDto email) {
 
-        final User user = blockUser(email.getEmail());
+        final User user = blockUser(email.email());
 
         final String token = generateEmailCode(user);
 
@@ -64,7 +64,7 @@ public class ForgotPasswordUseCase {
 
     private User blockUser(String email) {
         final User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Код недействителен"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не может быть заблокирован"));
         user.setStatus(UserStatus.LOCKED);
         user.setPasswordHash("");
         return userRepository.save(user);
