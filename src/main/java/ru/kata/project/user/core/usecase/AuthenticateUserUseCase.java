@@ -1,15 +1,14 @@
 package ru.kata.project.user.core.usecase;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.kata.project.security.service.AuthAuditService;
-import ru.kata.project.security.service.JwtService;
+import ru.kata.project.user.core.dto.AuthenticationResponseDto;
+import ru.kata.project.user.core.dto.LoginRequestDto;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.core.port.Authenticator;
+import ru.kata.project.user.core.exception.UserNotFoundException;
 import ru.kata.project.user.core.port.repository.UserRepository;
-import ru.kata.project.user.dto.AuthenticationResponseDto;
-import ru.kata.project.user.dto.LoginRequestDto;
+import ru.kata.project.user.core.port.service.AuthAuditService;
+import ru.kata.project.user.core.port.service.AuthenticationService;
+import ru.kata.project.user.core.port.service.JwtService;
 
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ import java.util.UUID;
  * Этот класс обрабатывает процесс входа пользователя в систему.
  * </p>
  * <ul>
- *  <li> проверка правильности логина и пароля через {@link Authenticator};</li>
+ *  <li> проверка правильности логина и пароля через {@link AuthenticationService};</li>
  *  <li> загрузка данных пользователя через {@link UserRepository};</li>
  *  <li> генерация JWT access и refresh токенов через {@link JwtService};</li>
  *  <li> логирование события "AUTHENTICATE" через {@link AuthAuditService}.</li>
@@ -33,26 +32,25 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthenticateUserUseCase {
 
-    private final Authenticator authenticationManager;
+    private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthAuditService auditService;
 
-    public AuthenticationResponseDto execute(LoginRequestDto request, HttpServletResponse response) {
-        authenticationManager.authenticate(request.getUsername(), request.getPassword());
-        final User user = userRepository.findByUsernameOrEmail(request.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return generateTokens(user, response);
+    public AuthenticationResponseDto execute(LoginRequestDto request) {
+        authenticationService.authenticate(request.username(), request.password());
+        final User user = userRepository.findByUsernameOrEmail(request.username())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return generateTokens(user);
     }
 
-    private AuthenticationResponseDto generateTokens(User user, HttpServletResponse response) {
+    private AuthenticationResponseDto generateTokens(User user) {
         final String accessToken = jwtService.generateAccessToken(user);
         final String refreshToken = jwtService.generateRefreshToken(user);
 
         final UUID familyId = UUID.randomUUID();
 
         jwtService.saveUserToken(accessToken, refreshToken, user, familyId);
-        jwtService.setRefreshCookie(refreshToken, response);
 
         auditService.logAudit(user.getId(), "AUTHENTICATE", "0.0.0.0:0000", "{json:json}");
 

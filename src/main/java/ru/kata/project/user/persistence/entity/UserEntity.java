@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.kata.project.user.core.entity.User;
-import ru.kata.project.user.utility.enumeration.UserStatus;
+import ru.kata.project.user.core.entity.UserStatus;
 
 import java.sql.Timestamp;
 import java.util.Set;

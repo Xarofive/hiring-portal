@@ -3,24 +3,25 @@ package ru.kata.project.user.web.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.kata.project.user.core.dto.AuthenticationResponseDto;
+import ru.kata.project.user.core.dto.EmailResetDto;
+import ru.kata.project.user.core.dto.EmailVerificationCodeDto;
+import ru.kata.project.user.core.dto.LoginRequestDto;
+import ru.kata.project.user.core.dto.NewPasswordDto;
+import ru.kata.project.user.core.dto.RegistrationRequestDto;
+import ru.kata.project.user.core.port.service.JwtService;
 import ru.kata.project.user.core.usecase.AuthenticateUserUseCase;
 import ru.kata.project.user.core.usecase.ForgotPasswordUseCase;
-import ru.kata.project.user.core.usecase.LogoutUserUseCase;
 import ru.kata.project.user.core.usecase.RefreshTokenUseCase;
 import ru.kata.project.user.core.usecase.ResetPasswordUseCase;
 import ru.kata.project.user.core.usecase.UserRegistrationUseCase;
 import ru.kata.project.user.core.usecase.VerifyEmailUseCase;
-import ru.kata.project.user.dto.AuthenticationResponseDto;
-import ru.kata.project.user.dto.EmailResetDto;
-import ru.kata.project.user.dto.EmailVerificationCodeDto;
-import ru.kata.project.user.dto.LoginRequestDto;
-import ru.kata.project.user.dto.NewPasswordDto;
-import ru.kata.project.user.dto.RegistrationRequestDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +32,9 @@ public class AuthController {
     private final VerifyEmailUseCase verifyEmailUseCase;
     private final AuthenticateUserUseCase authenticateUserUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
-    private final LogoutUserUseCase logoutUserUseCase;
     private final ForgotPasswordUseCase forgotPasswordUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrationRequestDto registrationDto) {
@@ -49,19 +50,26 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponseDto> login(
             @RequestBody LoginRequestDto request,
             HttpServletResponse response) {
-        return ResponseEntity.ok(authenticateUserUseCase.execute(request, response));
+        final AuthenticationResponseDto tokens = authenticateUserUseCase.execute(request);
+
+        jwtService.setRefreshCookie(tokens.refreshToken(), response);
+
+        return ResponseEntity.ok(tokens);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthenticationResponseDto> refresh(
             HttpServletRequest request,
             HttpServletResponse response) {
-        return refreshTokenUseCase.execute(request, response);
-    }
+        final String refreshToken = jwtService.extractRefreshTokenFromCookie(request);
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        return ResponseEntity.ok(logoutUserUseCase.execute(request, response));
+        final AuthenticationResponseDto tokens = refreshTokenUseCase.execute(refreshToken);
+        jwtService.setRefreshCookie(tokens.refreshToken(), response);
+
+        return ResponseEntity.ok(tokens);
     }
 
     @PostMapping("/password/forgot")
