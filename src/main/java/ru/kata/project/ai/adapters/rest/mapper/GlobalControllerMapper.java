@@ -1,5 +1,6 @@
 package ru.kata.project.ai.adapters.rest.mapper;
 
+import ru.kata.project.ai.adapters.rest.ResumeAiController;
 import ru.kata.project.ai.adapters.rest.dto.AnalysisResultDto;
 import ru.kata.project.ai.adapters.rest.dto.AnalyzeRequestDto;
 import ru.kata.project.ai.adapters.rest.dto.EducationDto;
@@ -20,8 +21,27 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * GlobalControllerMapper
+ * <p>
+ * Общий маппер для DTO<->Domain в контроллере {@link ResumeAiController}.
+ * </p>
+ * <p>
+ * Утилитарный класс, который используется для конвертации ДТО-сущностей в Domain-модели в контроллере.
+ * </p>
+ * <p>
+ * Содержит:
+ * <li>публичные статические методы для конвертации;</li>
+ * <li>приватные методы для парсинга данных (в т.ч. локали и даты).</li>
+ * </p>
+ *
+ * @author Vladislav_Bogomolov
+ */
 public final class GlobalControllerMapper {
 
+    /**
+     * Стандартная локаль, если пользователь не сообщил иную
+     */
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
     private GlobalControllerMapper() {

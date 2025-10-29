@@ -1,21 +1,25 @@
 openapi: 3.0.3
 info:
-  title: Resume AI API
+  title: Ai Resume API
   version: 1.0.0
   description: |
-    REST API для анализа и генерации резюме.
-    Все ответы формируются stub-реализациями без внешних AI-запросов.
+    REST API для анализа и генерации резюме с помощью ИИ.
 servers:
   - url: http://localhost:8080
     description: Local development server
+tags:
+  - name: Ai Resume
+    description: "Эндпоинты для анализа и генерации резюме с помощью ИИ"
 
 paths:
   /ai/resumes/{id}/analyze:
     post:
+      tags:
+        - Ai Resume
       summary: Анализ резюме
       description: Выполняет анализ резюме по указанному идентификатору и возвращает рекомендации.
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -48,10 +52,12 @@ paths:
 
   /ai/resumes/generate:
     post:
+      tags:
+        - Ai Resume
       summary: Генерация черновика резюме
       description: Создает шаблон резюме по входным данным (имя, целевая должность, навыки и т.д.).
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -92,8 +98,8 @@ components:
           example: "Java Developer"
         targetSeniority:
           type: string
-          enum: ["JUNIOR", "MIDDLE", "SENIOR", "LEAD"]
-      required: [locale, targetRole, targetSeniority]
+          enum: [ "JUNIOR", "MIDDLE", "SENIOR", "LEAD" ]
+      required: [ locale, targetRole, targetSeniority ]
 
     GenerateRequestDto:
       description: DTO-запрос с данными для генерации резюме
@@ -121,7 +127,7 @@ components:
         locale:
           type: string
           example: "en"
-      required: [fullName, targetRole, locale]
+      required: [ fullName, targetRole, locale ]
 
     ExperienceDto:
       description: DTO-значение с данными об опыте работы пользователя
@@ -188,7 +194,7 @@ components:
           type: array
           items:
             type: string
-          example: ["Java", "Spring Boot", "Docker"]
+          example: [ "Java", "Spring Boot", "Docker" ]
         templateVersion:
           type: string
           example: "stub-1.0.0"
@@ -197,4 +203,4 @@ components:
           example: "en"
 
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]

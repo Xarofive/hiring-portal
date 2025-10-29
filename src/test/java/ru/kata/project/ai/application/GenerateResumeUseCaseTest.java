@@ -5,10 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.kata.project.ai.core.entity.EducationItem;
+import ru.kata.project.ai.core.entity.ExperienceItem;
 import ru.kata.project.ai.core.entity.GeneratedResume;
 import ru.kata.project.ai.core.entity.GenerationContext;
 import ru.kata.project.ai.core.port.ResumeGenerator;
 
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Locale;
 
@@ -142,5 +146,169 @@ public class GenerateResumeUseCaseTest {
 
         verify(generator).generate(context);
         assertThat(actual.title()).contains("Data Scientist");
+    }
+
+    @Test
+    void givenExperienceWithNullDates_whenExecute_thenThrowsException() {
+        final ExperienceItem invalidExp = new ExperienceItem(
+                "TechCorp",
+                "Engineer",
+                null,
+                YearMonth.of(2024, 5),
+                "Worked on stuff",
+                List.of()
+        );
+        final GenerationContext context = new GenerationContext(
+                "Ivan",
+                "Developer",
+                List.of("Java"),
+                List.of(invalidExp),
+                List.of(),
+                Locale.ENGLISH
+        );
+
+        assertThatThrownBy(() -> useCase.execute(context))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("опыт работы")
+                .hasMessageContaining("TechCorp");
+
+        verifyNoInteractions(generator);
+    }
+
+    @Test
+    void givenExperienceWithEndBeforeStart_whenExecute_thenThrowsException() {
+        final ExperienceItem invalidExp = new ExperienceItem(
+                "Acme Corp",
+                "Tester",
+                YearMonth.of(2023, 5),
+                YearMonth.of(2022, 12),
+                "Testing apps",
+                List.of()
+        );
+        final GenerationContext context = new GenerationContext(
+                "Bob",
+                "QA Engineer",
+                List.of(),
+                List.of(invalidExp),
+                List.of(),
+                Locale.ENGLISH
+        );
+
+        assertThatThrownBy(() -> useCase.execute(context))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Acme Corp")
+                .hasMessageContaining("окончания раньше даты начала");
+
+        verifyNoInteractions(generator);
+    }
+
+    @Test
+    void givenEducationWithEndBeforeStart_whenExecute_thenThrowsException() {
+        final EducationItem invalidEdu = new EducationItem(
+                "Bachelor",
+                "MIT",
+                Year.of(2025),
+                Year.of(2023),
+                "CS"
+        );
+        final GenerationContext context = new GenerationContext(
+                "Alice",
+                "Engineer",
+                List.of(),
+                List.of(),
+                List.of(invalidEdu),
+                Locale.ENGLISH
+        );
+
+        assertThatThrownBy(() -> useCase.execute(context))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("MIT")
+                .hasMessageContaining("окончания раньше даты начала");
+
+        verifyNoInteractions(generator);
+    }
+
+    @Test
+    void givenEducationWithNullDates_whenExecute_thenThrowsException() {
+        final EducationItem invalidEdu = new EducationItem(
+                "B.Sc.",
+                "Stanford",
+                null,
+                null,
+                "CS"
+        );
+        final GenerationContext context = new GenerationContext(
+                "Tom",
+                "Developer",
+                List.of(),
+                List.of(),
+                List.of(invalidEdu),
+                Locale.ENGLISH
+        );
+
+        assertThatThrownBy(() -> useCase.execute(context))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Stanford")
+                .hasMessageContaining("неполные даты");
+
+        verifyNoInteractions(generator);
+    }
+
+    @Test
+    void givenNoExperienceAndNoEducationNull_whenExecute_thenSucceeds() {
+        final GenerationContext context = new GenerationContext(
+                "Alice",
+                "QA Engineer",
+                List.of("Testing"),
+                null,
+                null,
+                Locale.ENGLISH
+        );
+
+        final GeneratedResume expected = new GeneratedResume(
+                "QA Engineer — Alice",
+                "Stub summary",
+                List.of("Testing"),
+                List.of(),
+                List.of(),
+                "stub-1.0.0",
+                Locale.ENGLISH
+        );
+
+        when(generator.generate(context)).thenReturn(expected);
+
+        final GeneratedResume actual = useCase.execute(context);
+
+        verify(generator).generate(context);
+        assertThat(actual.title()).contains("QA Engineer");
+    }
+
+    @Test
+    void givenNoExperienceAndNoEducationEmpty_whenExecute_thenSucceeds() {
+        final GenerationContext context = new GenerationContext(
+                "Alice",
+                "QA Engineer",
+                List.of("Testing"),
+                List.of(),
+                List.of(),
+                Locale.ENGLISH
+        );
+
+        final GeneratedResume expected = new GeneratedResume(
+                "QA Engineer — Alice",
+                "Stub summary",
+                List.of("Testing"),
+                List.of(),
+                List.of(),
+                "stub-1.0.0",
+                Locale.ENGLISH
+        );
+
+        when(generator.generate(context)).thenReturn(expected);
+
+        final GeneratedResume actual = useCase.execute(context);
+
+        verify(generator).generate(context);
+        assertThat(actual.title()).contains("QA Engineer");
     }
 }

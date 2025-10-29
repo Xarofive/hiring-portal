@@ -11,6 +11,14 @@ import ru.kata.project.ai.application.port.ResumeRepository;
 import ru.kata.project.ai.core.port.ResumeAnalyzer;
 import ru.kata.project.ai.core.port.ResumeGenerator;
 
+/**
+ * AiBeanConfig
+ * <p>
+ * Класс-конфигуратор для бинов AI-модуля.
+ * </p>
+ *
+ * @author Vladislav_Bogomolov
+ */
 @Slf4j
 @Configuration
 public class AiBeanConfig {

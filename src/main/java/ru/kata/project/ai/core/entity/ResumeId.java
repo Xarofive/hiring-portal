@@ -5,6 +5,15 @@ import lombok.Getter;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * ResumeId
+ * <p>
+ * Представляет уникальный идентификатор резюме.
+ * Имеет два фабричных метода для создания UUID: из валидного UUID и из строки.
+ * </p>
+ *
+ * @author Vladislav_Bogomolov
+ */
 @Getter
 public class ResumeId {
     private final UUID value;
