@@ -3,10 +3,12 @@ package ru.kata.project.ai.application;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.kata.project.ai.application.exception.ResourceNotFoundException;
+import ru.kata.project.ai.application.port.OutboxResumeEventPublisher;
 import ru.kata.project.ai.application.port.ResumeRepository;
 import ru.kata.project.ai.core.entity.AnalysisContext;
 import ru.kata.project.ai.core.entity.AnalysisResult;
 import ru.kata.project.ai.core.entity.ResumeId;
+import ru.kata.project.ai.core.event.ResumeAnalyzedEvent;
 import ru.kata.project.ai.core.port.ResumeAnalyzer;
 
 import java.time.Instant;
@@ -22,6 +24,7 @@ import java.time.Instant;
  * <ul>
  *  <li> анализ резюме через анализатор {@link ResumeAnalyzer};</li>
  *  <li> проверка существования резюме через {@link ResumeRepository};</li>
+ *  <li> публикация в Kafka через {@link OutboxResumeEventPublisher}.</li>
  * </ul>
  *
  * @author Vladislav_Bogomolov
@@ -32,6 +35,7 @@ public class AnalyzeResumeUseCase {
 
     private final ResumeAnalyzer analyzer;
     private final ResumeRepository resumeRepository;
+    private final OutboxResumeEventPublisher outboxResumeEventPublisher;
 
     public AnalysisResult execute(String idStr, AnalysisContext analysisContext) {
         log.info("Анализ резюме, id = {}", idStr);
@@ -40,6 +44,7 @@ public class AnalyzeResumeUseCase {
         final AnalysisResult result = analyzer.analyze(id, analysisContext);
 
         log.info("Анализ резюме завершён, id = {}", idStr);
+        publishResumeAnalyzedEvent(result);
         return new AnalysisResult(result.resumeId(), result.recommendations(), Instant.now(), result.analyzerVersion());
     }
 
@@ -54,5 +59,18 @@ public class AnalyzeResumeUseCase {
             throw new ResourceNotFoundException("Резюме не найдено: " + id);
         }
         return resumeId;
+    }
+
+    private void publishResumeAnalyzedEvent(AnalysisResult result) {
+        final var event = ResumeAnalyzedEvent.of(result.resumeId().getValue());
+
+        outboxResumeEventPublisher.publish(
+                result.resumeId().getValue().toString(),
+                event.eventType(),
+                event,
+                event.schemaVersion(),
+                event.source(),
+                event.traceId()
+        );
     }
 }

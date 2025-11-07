@@ -12,6 +12,7 @@ import ru.kata.project.user.core.entity.UserStatus;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
 import ru.kata.project.user.core.port.service.AuthAuditService;
+import ru.kata.project.user.core.port.service.OutboxUserEventPublisher;
 import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
 import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
 import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
@@ -49,6 +50,8 @@ public class UserRegistrationUseCaseTest {
     EmailCodeGenerator emailCodeGenerator;
     @Mock
     AuthAuditService auditService;
+    @Mock
+    OutboxUserEventPublisher outboxUserEventPublisher;
 
     @InjectMocks
     UserRegistrationUseCase useCase;

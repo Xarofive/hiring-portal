@@ -1,0 +1,30 @@
+{
+  "type": "record",
+  "name": "DeadLetterEvent",
+  "fields": [
+    {
+      "name": "originalEventType",
+      "type": "string",
+      "doc": "Type of original event that failed to send"
+    },
+    {
+      "name": "payload",
+      "type": "string",
+      "doc": "JSON representation of the original event"
+    },
+    {
+      "name": "errorMessage",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Description of the processing error"
+    },
+    {
+      "name": "failedAt",
+      "type": "long",
+      "doc": "Error Time in epoch millis"
+    }
+  ]
+}

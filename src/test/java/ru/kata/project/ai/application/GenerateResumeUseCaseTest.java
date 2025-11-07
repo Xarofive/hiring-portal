@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.kata.project.ai.application.port.OutboxResumeEventPublisher;
 import ru.kata.project.ai.core.entity.EducationItem;
 import ru.kata.project.ai.core.entity.ExperienceItem;
 import ru.kata.project.ai.core.entity.GeneratedResume;
@@ -26,8 +27,9 @@ import static org.mockito.Mockito.when;
 public class GenerateResumeUseCaseTest {
 
     @Mock
+    OutboxResumeEventPublisher outboxResumeEventPublisher;
+    @Mock
     private ResumeGenerator generator;
-
     @InjectMocks
     private GenerateResumeUseCase useCase;
 

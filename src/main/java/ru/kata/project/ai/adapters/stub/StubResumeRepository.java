@@ -21,6 +21,6 @@ import java.util.UUID;
 public class StubResumeRepository implements ResumeRepository {
     @Override
     public boolean existsById(UUID id) {
-        return !id.equals(java.util.UUID.fromString("00000000-0000-0000-0000-000000000000"));
+        return !id.equals(UUID.fromString("00000000-0000-0000-0000-000000000000"));
     }
 }

@@ -2,10 +2,12 @@ package ru.kata.project.ai.application;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.kata.project.ai.application.port.OutboxResumeEventPublisher;
 import ru.kata.project.ai.core.entity.EducationItem;
 import ru.kata.project.ai.core.entity.ExperienceItem;
 import ru.kata.project.ai.core.entity.GeneratedResume;
 import ru.kata.project.ai.core.entity.GenerationContext;
+import ru.kata.project.ai.core.event.ResumeGeneratedEvent;
 import ru.kata.project.ai.core.port.ResumeGenerator;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
  * </p>
  * <ul>
  *  <li> генерация резюме через генератор {@link ResumeGenerator};</li>
+ *  <li> публикация в Kafka через {@link OutboxResumeEventPublisher}.</li>
  * </ul>
  *
  * @author Vladislav_Bogomolov
@@ -29,6 +32,7 @@ import java.util.List;
 public class GenerateResumeUseCase {
 
     private final ResumeGenerator resumeGenerator;
+    private final OutboxResumeEventPublisher outboxResumeEventPublisher;
 
     public GeneratedResume execute(GenerationContext context) {
         if (context == null) {
@@ -46,7 +50,7 @@ public class GenerateResumeUseCase {
         final GeneratedResume result = resumeGenerator.generate(context);
 
         log.info("Генерация завершена. Версия шаблона: '{}'", result.templateVersion());
-
+        publishResumeGeneratedEvent(result);
         return result;
     }
 
@@ -86,5 +90,18 @@ public class GenerateResumeUseCase {
                 }
             }
         }
+    }
+
+    private void publishResumeGeneratedEvent(GeneratedResume resume) {
+        final var event = ResumeGeneratedEvent.of(resume.title());
+
+        outboxResumeEventPublisher.publish(
+                event.aggregateId(),
+                event.eventType(),
+                event,
+                event.schemaVersion(),
+                event.source(),
+                event.traceId()
+        );
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import ru.kata.project.ai.adapters.stub.StubResumeRepository;
 import ru.kata.project.ai.application.AnalyzeResumeUseCase;
 import ru.kata.project.ai.application.GenerateResumeUseCase;
+import ru.kata.project.ai.application.port.OutboxResumeEventPublisher;
 import ru.kata.project.ai.application.port.ResumeRepository;
 import ru.kata.project.ai.core.port.ResumeAnalyzer;
 import ru.kata.project.ai.core.port.ResumeGenerator;
@@ -24,13 +25,19 @@ import ru.kata.project.ai.core.port.ResumeGenerator;
 public class AiBeanConfig {
 
     @Bean
-    public AnalyzeResumeUseCase analyzeResumeUseCase(ResumeAnalyzer analyzer, ResumeRepository resumePort) {
-        return new AnalyzeResumeUseCase(analyzer, resumePort);
+    public AnalyzeResumeUseCase analyzeResumeUseCase(ResumeAnalyzer analyzer,
+                                                     ResumeRepository resumePort,
+                                                     OutboxResumeEventPublisher outboxResumeEventPublisher) {
+        return new AnalyzeResumeUseCase(analyzer,
+                resumePort,
+                outboxResumeEventPublisher);
     }
 
     @Bean
-    public GenerateResumeUseCase generateResumeUseCase(ResumeGenerator generator) {
-        return new GenerateResumeUseCase(generator);
+    public GenerateResumeUseCase generateResumeUseCase(ResumeGenerator generator,
+                                                       OutboxResumeEventPublisher outboxResumeEventPublisher) {
+        return new GenerateResumeUseCase(generator,
+                outboxResumeEventPublisher);
     }
 
     @Bean

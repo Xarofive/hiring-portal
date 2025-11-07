@@ -1,0 +1,41 @@
+{
+  "type": "record",
+  "name": "ResumeAnalyzed",
+  "doc": "Event emits when user analyze resume",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "ResumeAnalyzed"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "string",
+      "default": "1"
+    },
+    {
+      "name": "aggregateId",
+      "type": "string"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "traceId",
+      "type": "string"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "ai-resume-module"
+    }
+  ]
+}

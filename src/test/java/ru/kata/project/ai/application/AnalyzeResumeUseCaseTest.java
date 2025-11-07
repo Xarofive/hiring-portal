@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.kata.project.ai.application.exception.ResourceNotFoundException;
+import ru.kata.project.ai.application.port.OutboxResumeEventPublisher;
 import ru.kata.project.ai.application.port.ResumeRepository;
 import ru.kata.project.ai.core.entity.AnalysisContext;
 import ru.kata.project.ai.core.entity.AnalysisResult;
@@ -29,11 +30,11 @@ import static org.mockito.Mockito.when;
 public class AnalyzeResumeUseCaseTest {
 
     @Mock
+    OutboxResumeEventPublisher outboxResumeEventPublisher;
+    @Mock
     private ResumeAnalyzer analyzer;
-
     @Mock
     private ResumeRepository repository;
-
     @InjectMocks
     private AnalyzeResumeUseCase useCase;
 

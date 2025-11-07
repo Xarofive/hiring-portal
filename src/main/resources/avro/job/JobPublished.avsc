@@ -1,0 +1,41 @@
+{
+  "type": "record",
+  "name": "JobPublished",
+  "doc": "Event emits when job is published",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "JobPublished"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "string",
+      "default": "1"
+    },
+    {
+      "name": "aggregateId",
+      "type": "string"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "traceId",
+      "type": "string"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "job-module"
+    }
+  ]
+}

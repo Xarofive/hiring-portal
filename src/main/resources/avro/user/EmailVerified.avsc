@@ -1,0 +1,45 @@
+{
+  "type": "record",
+  "name": "EmailVerified",
+  "doc": "Event emits when user verified email",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "EmailVerified"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "string",
+      "default": "1"
+    },
+    {
+      "name": "aggregateId",
+      "type": "string"
+    },
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "traceId",
+      "type": "string"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "user-module"
+    }
+  ]
+}

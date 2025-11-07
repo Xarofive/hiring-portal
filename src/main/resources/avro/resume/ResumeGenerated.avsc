@@ -1,0 +1,45 @@
+{
+  "type": "record",
+  "name": "ResumeGenerated",
+  "doc": "Event emits when user generate resume",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "ResumeGenerated"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "string",
+      "default": "1"
+    },
+    {
+      "name": "aggregateId",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "traceId",
+      "type": "string"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "ai-resume-module"
+    }
+  ]
+}

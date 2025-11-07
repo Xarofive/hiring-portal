@@ -1,0 +1,40 @@
+{
+  "type": "record",
+  "name": "NotificationRequested",
+  "doc": "Event emits when notification is requested",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "NotificationRequested"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "string",
+      "default": "1"
+    },
+    {
+      "name": "aggregateId",
+      "type": "string"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "traceId",
+      "type": "string"
+    },
+    {
+      "name": "source",
+      "type": "string"
+    }
+  ]
+}
