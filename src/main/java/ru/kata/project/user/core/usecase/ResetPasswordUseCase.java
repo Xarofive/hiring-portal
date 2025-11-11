@@ -5,13 +5,11 @@ import ru.kata.project.user.core.dto.NewPasswordDto;
 import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.entity.UserStatus;
-import ru.kata.project.user.core.event.PasswordResetEvent;
 import ru.kata.project.user.core.exception.InvalidCodeException;
 import ru.kata.project.user.core.exception.UserNotFoundException;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
 import ru.kata.project.user.core.port.service.AuthAuditService;
-import ru.kata.project.user.core.port.service.OutboxUserEventPublisher;
 import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
 import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
 
@@ -31,7 +29,6 @@ import java.sql.Timestamp;
  *  <li> хеширование верификационного кода через {@link EmailCodeEncoder};</li>
  *  <li> хеширование пароля через {@link UserPasswordEncoder};</li>
  *  <li> логирование события "RESET_PASSWORD" через {@link AuthAuditService}.</li>
- *  <li> публикация в Kafka через {@link OutboxUserEventPublisher}.</li>
  * </ul>
  *
  * @author Vladislav_Bogomolov
@@ -44,13 +41,11 @@ public class ResetPasswordUseCase {
     private final UserPasswordEncoder passwordEncoder;
     private final EmailCodeEncoder emailCodeEncoder;
     private final AuthAuditService auditService;
-    private final OutboxUserEventPublisher outboxUserEventPublisher;
 
     public String execute(NewPasswordDto newPasswordDto) {
         final EmailVerification verification = findEmailVerification(newPasswordDto.code());
         final User user = findUser(verification);
         resetPassword(user, verification, newPasswordDto.password());
-        publishPasswordResetEvent(user);
         return "Пароль успешно изменён, пользователь разблокирован";
     }
 
@@ -76,21 +71,5 @@ public class ResetPasswordUseCase {
         verification.setConsumedAt(new Timestamp(System.currentTimeMillis()));
         emailVerificationRepository.save(verification);
         auditService.logAudit(user.getId(), "RESET_PASSWORD", "0.0.0.0:0000", "{json:json}");
-    }
-
-    private void publishPasswordResetEvent(User user) {
-        final var event = PasswordResetEvent.of(
-                user.getId(),
-                user.getEmail()
-        );
-
-        outboxUserEventPublisher.publish(
-                user.getId().toString(),
-                event.eventType(),
-                event,
-                event.schemaVersion(),
-                event.source(),
-                event.traceId()
-        );
     }
 }

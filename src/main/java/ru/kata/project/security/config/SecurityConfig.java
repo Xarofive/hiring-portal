@@ -40,7 +40,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**", "/css/**", "/").permitAll();
-                    auth.requestMatchers("/actuator/health", "/actuator/prometheus").permitAll();
+                    auth.requestMatchers("/actuator/health").permitAll();
                     auth.requestMatchers(
                             "/swagger-ui.html",
                             "/swagger-ui/**",

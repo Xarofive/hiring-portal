@@ -15,7 +15,6 @@ import ru.kata.project.user.core.exception.UserNotFoundException;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
 import ru.kata.project.user.core.port.service.AuthAuditService;
-import ru.kata.project.user.core.port.service.OutboxUserEventPublisher;
 import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
 import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
 
@@ -48,8 +47,6 @@ class ResetPasswordUseCaseTest {
     EmailCodeEncoder emailCodeEncoder;
     @Mock
     AuthAuditService auditService;
-    @Mock
-    OutboxUserEventPublisher outboxUserEventPublisher;
 
     @InjectMocks
     ResetPasswordUseCase useCase;

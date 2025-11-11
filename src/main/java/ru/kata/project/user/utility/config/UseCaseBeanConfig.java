@@ -2,13 +2,11 @@ package ru.kata.project.user.utility.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.Transactional;
 import ru.kata.project.security.service.JwtServiceAdapter;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.TokenRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
 import ru.kata.project.user.core.port.service.AuthenticationService;
-import ru.kata.project.user.core.port.service.OutboxUserEventPublisher;
 import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
 import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
 import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
@@ -33,14 +31,13 @@ import ru.kata.project.user.persistence.service.AuthAuditServiceAdapter;
 public class UseCaseBeanConfig {
 
     @Bean
-    @Transactional
     public UserRegistrationUseCase userRegistrationUseCase(
             UserRepository userRepository,
             UserPasswordEncoder passwordEncoder,
             EmailVerificationRepository emailVerificationRepository,
             EmailCodeEncoder emailCodeEncoder,
             EmailCodeGenerator emailCodeGenerator,
-            AuthAuditServiceAdapter auditService, OutboxUserEventPublisher outboxUserEventPublisher) {
+            AuthAuditServiceAdapter auditService) {
 
         return new UserRegistrationUseCase(
                 userRepository,
@@ -48,8 +45,7 @@ public class UseCaseBeanConfig {
                 emailVerificationRepository,
                 emailCodeEncoder,
                 emailCodeGenerator,
-                auditService,
-                outboxUserEventPublisher
+                auditService
         );
     }
 
@@ -57,14 +53,12 @@ public class UseCaseBeanConfig {
     public VerifyEmailUseCase verifyEmailUseCase(UserRepository userRepository,
                                                  EmailVerificationRepository emailVerificationRepository,
                                                  EmailCodeEncoder emailCodeEncoder,
-                                                 AuthAuditServiceAdapter auditService,
-                                                 OutboxUserEventPublisher outboxUserEventPublisher) {
+                                                 AuthAuditServiceAdapter auditService) {
 
         return new VerifyEmailUseCase(userRepository,
                 emailVerificationRepository,
                 emailCodeEncoder,
-                auditService,
-                outboxUserEventPublisher);
+                auditService);
     }
 
     @Bean
@@ -124,14 +118,12 @@ public class UseCaseBeanConfig {
                                                      EmailVerificationRepository emailVerificationRepository,
                                                      UserPasswordEncoder passwordEncoder,
                                                      EmailCodeEncoder emailCodeEncoder,
-                                                     AuthAuditServiceAdapter auditService,
-                                                     OutboxUserEventPublisher outboxUserEventPublisher) {
+                                                     AuthAuditServiceAdapter auditService) {
 
         return new ResetPasswordUseCase(userRepository,
                 emailVerificationRepository,
                 passwordEncoder,
                 emailCodeEncoder,
-                auditService,
-                outboxUserEventPublisher);
+                auditService);
     }
 }

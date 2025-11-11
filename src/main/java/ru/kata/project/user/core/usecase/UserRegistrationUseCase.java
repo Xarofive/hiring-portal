@@ -6,11 +6,9 @@ import ru.kata.project.user.core.entity.EmailVerification;
 import ru.kata.project.user.core.entity.User;
 import ru.kata.project.user.core.entity.UserProfile;
 import ru.kata.project.user.core.entity.UserStatus;
-import ru.kata.project.user.core.event.UserRegisteredEvent;
 import ru.kata.project.user.core.port.repository.EmailVerificationRepository;
 import ru.kata.project.user.core.port.repository.UserRepository;
 import ru.kata.project.user.core.port.service.AuthAuditService;
-import ru.kata.project.user.core.port.service.OutboxUserEventPublisher;
 import ru.kata.project.user.core.port.utility.EmailCodeEncoder;
 import ru.kata.project.user.core.port.utility.EmailCodeGenerator;
 import ru.kata.project.user.core.port.utility.UserPasswordEncoder;
@@ -36,7 +34,6 @@ import java.util.regex.Pattern;
  *  <li> хеширование верификационного кода через {@link EmailCodeEncoder};</li>
  *  <li> генерация верификационного кода через {@link EmailCodeGenerator};</li>
  *  <li> логирование события "REGISTRATION" через {@link AuthAuditService}.</li>
- *  <li> публикация в Kafka через {@link OutboxUserEventPublisher}.</li>
  * </ul>
  *
  * @author Vladislav_Bogomolov
@@ -53,14 +50,12 @@ public class UserRegistrationUseCase {
     private final EmailCodeEncoder emailCodeEncoder;
     private final EmailCodeGenerator emailCodeGenerator;
     private final AuthAuditService auditService;
-    private final OutboxUserEventPublisher outboxUserEventPublisher;
 
     public String execute(RegistrationRequestDto request) {
         final User user = createUser(request);
         final String emailVerificationToken = createEmailVerification(user);
 
         auditService.logAudit(user.getId(), "REGISTRATION", "0.0.0.0:0000", "{json:json}");
-        publishUserRegisteredEvent(user);
 
         return "Пользователь создан. Пожалуйста, подтвердите почту. Код для подтверждения - " + emailVerificationToken;
     }
@@ -106,21 +101,5 @@ public class UserRegistrationUseCase {
                 .codeHash(emailCodeEncoder.encode(code))
                 .build());
         return code;
-    }
-
-    private void publishUserRegisteredEvent(User user) {
-        final var event = UserRegisteredEvent.of(
-                user.getId(),
-                user.getEmail()
-        );
-
-        outboxUserEventPublisher.publish(
-                user.getId().toString(),
-                event.eventType(),
-                event,
-                event.schemaVersion(),
-                event.source(),
-                event.traceId()
-        );
     }
 }
