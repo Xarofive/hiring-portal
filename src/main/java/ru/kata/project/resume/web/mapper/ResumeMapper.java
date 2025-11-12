@@ -6,13 +6,13 @@ import ru.kata.project.resume.web.dto.ResumeResponseDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 /**
  * ResumeMapper
  * <p>
  *     Маппер для преобразования между доменными сущностями и DTO
  * </p>
  */
+
 public class ResumeMapper {
 
     public static CreateResumeResponseDTO toCreateResumeResponseDTO(Resume resume) {

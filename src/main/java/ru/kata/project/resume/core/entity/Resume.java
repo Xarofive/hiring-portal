@@ -10,16 +10,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
 /**
  * Resume
  * <p>
  * Представляет сущность Resume. Содержит основную информацию о профессиональном профиле пользователя,
  * включая контактные данные, навыки и опыт. </p>
- *
  * <p>Использует Value Objects (Email, Skill) для типизации данных
  * и обеспечения валидации на уровне доменной модели.</p>
  */
+
 @Builder
 @Getter
 public class Resume {
@@ -37,7 +36,8 @@ public class Resume {
     @Setter
     private LocalDateTime updatedAt;
 
-    public Resume(UUID userId, String title, String summary, Email email, List<Skill> skillList) {
+    public Resume(UUID id, UUID userId, String title, String summary, Email email, List<Skill> skillList) {
+        this.id = id;
         this.userId = userId;
         this.title = title;
         this.summary = summary;

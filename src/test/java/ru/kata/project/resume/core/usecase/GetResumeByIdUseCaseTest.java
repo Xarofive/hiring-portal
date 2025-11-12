@@ -11,8 +11,8 @@ import ru.kata.project.resume.core.entity.Resume;
 import ru.kata.project.resume.core.entity.vo.Email;
 import ru.kata.project.resume.core.entity.vo.Skill;
 import ru.kata.project.resume.core.port.ResumeRepository;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeNotFoundException;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeNotFoundException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 import ru.kata.project.resume.web.dto.ResumeResponseDTO;
 import ru.kata.project.security.utility.SecurityUtils;
 
@@ -71,7 +71,7 @@ public class GetResumeByIdUseCaseTest {
             assertThat(responseDTO.title()).isEqualTo("Java Developer");
             assertThat(responseDTO.summary()).isEqualTo("Какое-то описание");
             assertThat(responseDTO.email().value()).isEqualTo("test@example.com");
-            assertThat(responseDTO.skillList()).hasSize(2);
+            assertThat(responseDTO.skills()).hasSize(2);
         }
     }
 

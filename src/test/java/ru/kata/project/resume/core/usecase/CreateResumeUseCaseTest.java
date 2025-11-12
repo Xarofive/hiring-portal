@@ -11,7 +11,7 @@ import ru.kata.project.resume.core.entity.Resume;
 import ru.kata.project.resume.core.entity.vo.Email;
 import ru.kata.project.resume.core.entity.vo.Skill;
 import ru.kata.project.resume.core.port.ResumeRepository;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 import ru.kata.project.resume.web.dto.CreateResumeResponseDTO;
 import ru.kata.project.resume.web.dto.ResumeRequestDTO;
 import ru.kata.project.security.utility.SecurityUtils;
@@ -42,16 +42,15 @@ class CreateResumeUseCaseTest {
         userId = UUID.randomUUID();
         final UUID resumeId = UUID.randomUUID();
 
-        requestDTO = new ResumeRequestDTO(
-                "Java Developer",
-                "Какое-то описание",
-                new Email("test@example.com"),
-                List.of(
-                        new Skill("Java", INTERMEDIATE),
+        requestDTO = ResumeRequestDTO.builder()
+                .title("Java Developer")
+                .summary("Какое-то описание")
+                .email(new Email("test@example.com"))
+                .skills(List.of(
+                        new Skill("JavaScript", INTERMEDIATE),
                         new Skill("Spring Boot", INTERMEDIATE),
-                        new Skill("Hibernate", INTERMEDIATE)
-                )
-        );
+                        new Skill("Hibernate", INTERMEDIATE)))
+                .build();
 
         savedResume = Resume.builder()
                 .id(resumeId)

@@ -13,7 +13,6 @@ import ru.kata.project.resume.web.dto.ResumeRequestDTO;
 import ru.kata.project.resume.web.dto.ResumeResponseDTO;
 
 import java.util.UUID;
-
 /**
  * ResumeController
  * <p>
@@ -21,6 +20,7 @@ import java.util.UUID;
  *     общие операции с резюме
  * </p>
  */
+
 @RestController
 @RequestMapping("/resumes")
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class ResumeController {
 
     @PostMapping
     public ResponseEntity<CreateResumeResponseDTO> createResume(@RequestBody ResumeRequestDTO request) {
+        request.validate();
         final CreateResumeResponseDTO response = createResumeUseCase.execute(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

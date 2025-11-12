@@ -1,7 +1,6 @@
 package ru.kata.project.resume.persistence.jpa.adapter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,14 +8,15 @@ import ru.kata.project.resume.core.entity.Resume;
 import ru.kata.project.resume.core.port.ResumeRepository;
 import ru.kata.project.resume.persistence.jpa.entity.ResumeEntity;
 import ru.kata.project.resume.persistence.jpa.port.ResumeRepositoryJpaPort;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeDataException;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeDataException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
+import ru.kata.project.user.core.exception.UserNotFoundException;
+import ru.kata.project.user.core.port.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 /**
  * Класс для работы с резюме в базе данных через JPA.
  *
@@ -28,15 +28,18 @@ import java.util.stream.Collectors;
  *   <li>Поиск всех резюме пользователя</li>
  * </ul>
  */
+
 @Slf4j
 @Repository
 @Transactional(readOnly = true)
 public class ResumeRepositoryJpaAdapter implements ResumeRepository {
 
     private final ResumeRepositoryJpaPort resumeRepositoryJpa;
+    private final UserRepository userRepository;
 
-    public ResumeRepositoryJpaAdapter(ResumeRepositoryJpaPort resumeRepositoryJpa) {
+    public ResumeRepositoryJpaAdapter(ResumeRepositoryJpaPort resumeRepositoryJpa, UserRepository userRepository) {
         this.resumeRepositoryJpa = resumeRepositoryJpa;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -66,7 +69,8 @@ public class ResumeRepositoryJpaAdapter implements ResumeRepository {
     public boolean deleteById(UUID id) {
         try {
             if (resumeRepositoryJpa.existsById(id)) {
-                resumeRepositoryJpa.deleteById(id);
+                final Optional<ResumeEntity> resumeEntity =resumeRepositoryJpa.findById(id);
+                resumeRepositoryJpa.delete(resumeEntity.get());
                 log.info("Удалено резюме с id = {}", id);
                 return true;
             }
@@ -79,6 +83,9 @@ public class ResumeRepositoryJpaAdapter implements ResumeRepository {
 
     @Override
     public List<Resume> findByUserId(UUID userId) {
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new UserNotFoundException("Пользователь с ID " + userId + " не найден");
+        }
         try {
             return resumeRepositoryJpa.findByUserId(userId).stream()
                     .map(ResumeEntity::toDomain)

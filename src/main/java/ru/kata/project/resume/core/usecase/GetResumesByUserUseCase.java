@@ -3,15 +3,14 @@ package ru.kata.project.resume.core.usecase;
 import lombok.RequiredArgsConstructor;
 import ru.kata.project.resume.core.entity.Resume;
 import ru.kata.project.resume.core.port.ResumeRepository;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeNotFoundException;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeNotFoundException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 import ru.kata.project.resume.web.dto.ResumeResponseDTO;
 import ru.kata.project.resume.web.mapper.ResumeMapper;
 import ru.kata.project.security.utility.SecurityUtils;
 
 import java.util.List;
 import java.util.UUID;
-
 /**
  * Use Case для получения списка резюме пользователя.
  *

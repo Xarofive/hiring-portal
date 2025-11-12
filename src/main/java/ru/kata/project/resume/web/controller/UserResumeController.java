@@ -11,13 +11,13 @@ import ru.kata.project.resume.web.dto.ResumeResponseDTO;
 
 import java.util.List;
 import java.util.UUID;
-
 /**
  * UserResumeController
  * <p>
  *  REST контроллер для управления резюме пользователя
  *  операции с резюме текущего пользователя</p>
  */
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor

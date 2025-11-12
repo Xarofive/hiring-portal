@@ -3,7 +3,7 @@ package ru.kata.project.resume.core.usecase;
 import lombok.RequiredArgsConstructor;
 import ru.kata.project.resume.core.entity.Resume;
 import ru.kata.project.resume.core.port.ResumeRepository;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 import ru.kata.project.resume.web.dto.CreateResumeResponseDTO;
 import ru.kata.project.resume.web.dto.ResumeRequestDTO;
 import ru.kata.project.resume.web.mapper.ResumeMapper;
@@ -38,12 +38,15 @@ public class CreateResumeUseCase {
 
         final UUID currentUserId = SecurityUtils.getCurrentUserId();
 
+        final UUID resumeId = UUID.randomUUID();
+
         final Resume resume = new Resume(
+                resumeId,
                 currentUserId,
-                request.title(),
-                request.summary(),
-                request.email(),
-                request.skills()
+                request.getTitle(),
+                request.getSummary(),
+                request.getEmail(),
+                request.getSkills()
         );
 
         final Resume savedResume = resumeRepository.save(resume);

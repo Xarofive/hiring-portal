@@ -1,9 +1,8 @@
 package ru.kata.project.resume.core.entity.vo;
 
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 
 import java.util.regex.Pattern;
-
 /**
  * Email
  * <p>
@@ -11,6 +10,7 @@ import java.util.regex.Pattern;
  * Неизменяемый объект, проверяющий корректность email при создании
  * </p>
  */
+
 public record Email(String value) {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 

@@ -1,0 +1,341 @@
+openapi: 3.0.3
+info:
+  title: Resume API
+  version: 1.0.0
+  description: REST API для управления резюме
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Resume
+    description: Общие операции с резюме
+  - name: User Resume
+    description: Операции с резюме текущего пользователя
+
+paths:
+  /resumes:
+    post:
+      tags:
+        - Resume
+      summary: Создание нового резюме
+      description: Создает новое резюме для текущего пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResumeRequestDTO'
+      responses:
+        "201":
+          description: Резюме успешно создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateResumeResponseDTO'
+        "400":
+          description: |
+            Неверные данные запроса. Возможные ошибки:
+            - RESUME_VALIDATION_ERROR - ошибка валидации данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+        "403":
+          description: Доступ запрещен
+        "500":
+          description: |
+            Внутренняя ошибка сервера. Возможные ошибки:
+            - RESUME_DATA_ERROR - ошибка работы с базой данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+
+  /resumes/{id}:
+    get:
+      tags:
+        - Resume
+      summary: Получение резюме по ID
+      description: Возвращает резюме по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID резюме
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Резюме найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeResponseDTO'
+        "404":
+          description: |
+            Резюме не найдено. Возможные ошибки:
+            - RESUME_NOT_FOUND - резюме с указанным ID не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+        "500":
+          description: |
+            Внутренняя ошибка сервера. Возможные ошибки:
+            - RESUME_DATA_ERROR - ошибка работы с базой данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+
+    put:
+      tags:
+        - Resume
+      summary: Обновление резюме
+      description: Обновляет существующее резюме
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID резюме
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResumeRequestDTO'
+      responses:
+        "200":
+          description: Резюме успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeResponseDTO'
+        "400":
+          description: |
+            Неверные данные запроса. Возможные ошибки:
+            - RESUME_VALIDATION_ERROR - ошибка валидации данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+        "404":
+          description: |
+            Резюме не найдено. Возможные ошибки:
+            - RESUME_NOT_FOUND - резюме с указанным ID не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+        "500":
+          description: |
+            Внутренняя ошибка сервера. Возможные ошибки:
+            - RESUME_DATA_ERROR - ошибка работы с базой данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+
+    delete:
+      tags:
+        - Resume
+      summary: Удаление резюме
+      description: Удаляет резюме по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID резюме
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Резюме успешно удалено
+        "404":
+          description: |
+            Резюме не найдено. Возможные ошибки:
+            - RESUME_NOT_FOUND - резюме с указанным ID не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+        "500":
+          description: |
+            Внутренняя ошибка сервера. Возможные ошибки:
+            - RESUME_DATA_ERROR - ошибка работы с базой данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+
+  /users/{id}/resumes:
+    get:
+      tags:
+        - User Resume
+      summary: Получение всех резюме пользователя
+      description: Возвращает список всех резюме указанного пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Список резюме получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResumeResponseDTO'
+        "404":
+          description: |
+            Пользователь не найден. Возможные ошибки:
+              - USER_NOT_FOUND - пользователь с указанным ID не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+        "500":
+          description: |
+            Внутренняя ошибка сервера. Возможные ошибки:
+            - RESUME_DATA_ERROR - ошибка работы с базой данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeErrorResponse'
+
+components:
+  schemas:
+    ResumeRequestDTO:
+      description: DTO запроса для работы с резюме
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Java Developer"
+          description: Заголовок резюме
+        summary:
+          type: string
+          example: "Опытный Java разработчик с 5 лет опыта"
+          description: Описание резюме
+        email:
+          type: string
+          example: "test@mail.ru"
+          description: Email для связи
+        skills:
+          type: array
+          description: Список навыков
+          items:
+            $ref: '#/components/schemas/Skill'
+      required:
+        - title
+        - summary
+        - email
+        - skills
+
+    Skill:
+      type: object
+      description: Объект навыка
+      properties:
+        name:
+          type: string
+          example: "Java"
+          description: Название навыка
+        level:
+          type: string
+          enum:
+            - "BEGINNER"
+            - "INTERMEDIATE"
+            - "ADVANCED"
+            - "EXPERT"
+          example: "BEGINNER"
+          description: Уровень владения навыком
+      required:
+        - name
+        - level
+
+    CreateResumeResponseDTO:
+      description: DTO ответа после успешного создания резюме
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-11-11T12:00:00Z"
+
+    ResumeResponseDTO:
+      description: DTO для ответа с полной информацией о резюме
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        userId:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          example: "Java Developer"
+        summary:
+          type: string
+          example: "Опытный Java разработчик с 5 лет опыта"
+        email:
+          type: string
+          example: "test@mail.ru"
+        skills:
+          type: array
+          description: Список навыков
+          items:
+            $ref: '#/components/schemas/Skill'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-11-11T12:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-11-11T12:00:00Z"
+
+    ResumeErrorResponse:
+      type: object
+      description: Стандартный ответ об ошибке
+      properties:
+        errorCode:
+          type: string
+          description: Код ошибки
+          enum:
+            - "RESUME_VALIDATION_ERROR"
+            - "RESUME_NOT_FOUND"
+            - "RESUME_DATA_ERROR"
+          example: "RESUME_VALIDATION_ERROR"
+        message:
+          type: string
+          description: Сообщение об ошибке
+          examples:
+            validationError:
+              value: "Список навыков не может быть пустым"
+            notFoundError:
+              value: "Резюме с указанным ID не найдено"
+            dataError:
+              value: "Ошибка при сохранении резюме в базу данных"
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки
+          example: "2025-11-11T12:00:00Z"

@@ -4,13 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.kata.project.resume.core.port.ResumeRepository;
 import ru.kata.project.resume.core.usecase.*;
-
 /**
  * ResumeConfig
  * <p>
  *     Конфигурация Spring для Use Cases и репозиториев
  * </p>
  */
+
 @Configuration
 public class ResumeConfig {
 

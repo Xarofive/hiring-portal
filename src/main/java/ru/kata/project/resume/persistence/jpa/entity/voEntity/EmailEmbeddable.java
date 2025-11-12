@@ -8,11 +8,11 @@ import lombok.Setter;
 import ru.kata.project.resume.core.entity.vo.Email;
 
 import java.util.Objects;
-
 /**
  * JPA-встраиваемая сущность для хранения email в базе данных.
  * <p>Содержит методы для конвертации в доменный объект и обратно.</p>
  */
+
 @Embeddable
 @Getter
 @Setter

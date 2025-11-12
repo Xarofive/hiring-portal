@@ -1,13 +1,13 @@
 package ru.kata.project.resume.core.entity.vo;
 
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
-
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 /**
  * Skill
  * <p>
  *     VO для навыка с названием и уровнем
  * </p>
  */
+
 public record Skill(String name, SkillLevel level)  {
 
     public Skill {

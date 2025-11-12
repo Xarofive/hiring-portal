@@ -3,7 +3,6 @@ package ru.kata.project.resume.persistence.jpa.entity.voEntity;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +10,11 @@ import ru.kata.project.resume.core.entity.vo.Skill;
 
 import java.util.Objects;
 import java.util.UUID;
-
 /**
  * JPA-встраиваемая сущность с техническим ID для избежания коллизий
  * <p>Содержит методы для конвертации в доменный объект и обратно.</p>
  */
+
 @Embeddable
 @Getter
 @Setter

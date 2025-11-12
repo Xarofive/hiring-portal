@@ -11,19 +11,17 @@ import ru.kata.project.resume.core.entity.Resume;
 import ru.kata.project.resume.core.entity.vo.Email;
 import ru.kata.project.resume.core.entity.vo.Skill;
 import ru.kata.project.resume.core.port.ResumeRepository;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeNotFoundException;
-import ru.kata.project.resume.utility.ResumeExeption.ResumeValidationException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeNotFoundException;
+import ru.kata.project.resume.utility.resumeExeption.ResumeValidationException;
 import ru.kata.project.resume.web.dto.ResumeRequestDTO;
 import ru.kata.project.resume.web.dto.ResumeResponseDTO;
 import ru.kata.project.security.utility.SecurityUtils;
-import ru.kata.project.user.core.exception.UserNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -111,10 +109,10 @@ public class UpdateResumeUseCaseTest {
 
             assertNotNull(responseDTO);
             assertEquals(resumeId, responseDTO.id());
-            assertEquals(requestDTO.title(), responseDTO.title());
-            assertEquals(requestDTO.summary(), responseDTO.summary());
-            assertThat(responseDTO.skillList())
-                    .hasSize(1)  // или requestDTO.skillList().size()
+            assertEquals(requestDTO.getTitle(), responseDTO.title());
+            assertEquals(requestDTO.getSummary(), responseDTO.summary());
+            assertThat(responseDTO.skills())
+                    .hasSize(1)
                     .extracting(Skill::level)
                     .containsExactly(EXPERT);
 

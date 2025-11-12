@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 /**
  * ResumeEntity
  * <p>
  *     JPA сущность для Resume
  * </p>
  */
+
 @Entity
 @Table(name = "resumes")
 @Getter
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class ResumeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
@@ -55,6 +54,7 @@ public class ResumeEntity {
     }
 
     public ResumeEntity(Resume resume) {
+        this.id = resume.getId();
         this.userId = resume.getUserId();
         this.title = resume.getTitle();
         this.summary = resume.getSummary();

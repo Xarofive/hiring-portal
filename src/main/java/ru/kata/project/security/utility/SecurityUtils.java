@@ -5,9 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.kata.project.security.entity.UserDetailsEntity;
 import ru.kata.project.user.core.exception.UserNotFoundException;
-
 import java.util.UUID;
-
 /**
  * Класс для проверки пользователя.
  *
